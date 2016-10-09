@@ -1,0 +1,103 @@
+﻿using Microsoft.AspNet.Identity;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Xml;
+using CalendarApp.Models;
+using System.Web.Script.Serialization;
+using System.Globalization;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using System.IO;
+
+namespace CalendarApp.Controllers
+{
+    public class HomeController : Controller
+    {
+        private ApplicationDbContext db = new ApplicationDbContext();
+        public ActionResult Index()
+        {
+            //List<Event> eventList = db.Events.ToList();
+            //JavaScriptSerializer serializer = new JavaScriptSerializer();
+            //string json = serializer.Serialize(eventList);
+            //return View(new Event() { calendarDataHolder = json });
+
+            var eventList = db.Events.ToList();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(eventList);
+            return View(new Event() { calendarDataHolder = json });
+        }
+
+        public ActionResult About()
+        {
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        public void SaveEvent(Event entries)
+        {
+            Event data = entries;
+            data.start = Convert.ToDateTime(data.startDate + " " + data.startTime);
+            data.end = Convert.ToDateTime(data.endDate + " " + data.endTime);
+            db.Events.Add(data);
+            db.SaveChanges();
+            Response.Redirect("http://localhost:2928/Home/Index");
+        }
+
+        public Event GetEvents(string eventID)
+        {
+            Event existingEvent = db.Events.Find(eventID);
+            return existingEvent;
+        }
+
+
+
+        public void UpdateEvent(Event data)
+        {
+            Event oldEvent;
+            try
+            {
+                oldEvent = GetEvents(data.eventID);
+            }
+            catch (NullReferenceException e)
+            {
+                throw new Exception("That event does not exist.", e);
+            }
+            
+            oldEvent.title = data.title;
+            oldEvent.description = data.description;
+            oldEvent.startDate = data.startDate;
+            oldEvent.startTime = data.startTime;
+            oldEvent.endDate = data.endDate;
+            oldEvent.endTime = data.endTime;
+            oldEvent.start = Convert.ToDateTime(data.startDate + " " + data.startTime);
+            oldEvent.end = Convert.ToDateTime(data.endDate + " " + data.endTime);
+            oldEvent.eventID = data.title + data.startDate + data.startTime;
+            db.SaveChanges();
+            Response.Redirect("http://localhost:2928/Home/Index");
+        }
+        private Event DeserializeObject(string dataRow)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Event));
+            FileStream myStream = new FileStream(dataRow, FileMode.Open);
+            XmlReader myReader = XmlReader.Create(myStream);
+            Event myEvent = new Event();
+
+            myEvent = (Event)serializer.Deserialize(myReader);
+            myStream.Close();
+            return myEvent;
+        }
+    }
+}
+
