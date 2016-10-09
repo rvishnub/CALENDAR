@@ -45,11 +45,11 @@ namespace CalendarApp.Controllers
             return View();
         }
 
-        public void SaveEvent(Event entries)
+        public void SaveEvent(Event data)
         {
-            Event data = entries;
             data.start = Convert.ToDateTime(data.startDate + " " + data.startTime);
             data.end = Convert.ToDateTime(data.endDate + " " + data.endTime);
+            data.eventID = (data.title + data.startTime + data.endTime);
             db.Events.Add(data);
             db.SaveChanges();
             Response.Redirect("http://localhost:2928/Home/Index");
@@ -57,7 +57,8 @@ namespace CalendarApp.Controllers
 
         public Event GetEvents(string eventID)
         {
-            Event existingEvent = db.Events.Find(eventID);
+            Event existingEvent = new Event();
+            existingEvent = db.Events.Where(g => g.eventID == eventID).First();
             return existingEvent;
         }
 
@@ -65,7 +66,7 @@ namespace CalendarApp.Controllers
 
         public void UpdateEvent(Event data)
         {
-            Event oldEvent;
+            Event oldEvent = new Event();
             try
             {
                 oldEvent = GetEvents(data.eventID);
@@ -84,6 +85,14 @@ namespace CalendarApp.Controllers
             oldEvent.start = Convert.ToDateTime(data.startDate + " " + data.startTime);
             oldEvent.end = Convert.ToDateTime(data.endDate + " " + data.endTime);
             oldEvent.eventID = data.title + data.startDate + data.startTime;
+            db.SaveChanges();
+            Response.Redirect("http://localhost:2928/Home/Index");
+        }
+
+        public void DeleteEvent(Event data)
+        {
+            Event oldEvent = GetEvents(data.eventID);
+            db.Events.Remove(oldEvent);
             db.SaveChanges();
             Response.Redirect("http://localhost:2928/Home/Index");
         }

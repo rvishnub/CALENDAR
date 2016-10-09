@@ -21,7 +21,7 @@
 <div><h3>Add new event</h3></div>
 <div>
     <form id="newEventForm" class="well" action="/Home/SaveEvent" method="POST">
-        <input type="hidden" id="eventID">
+        <input type="text" id="eventID">
         <label>Event title</label>
         <input type="text" id="newEventTitle" placeholder="Title here" name="title"><br />
         <label>Description</label>
@@ -39,27 +39,13 @@
 </div>
 </div>
 
-<div id="changeOrDeleteForm" style="display: none;">
-        <fieldset>
-            <form id="updateOrDeleteEventForm" class="well">
-                <label for="radio-1">Delete event</label>
-                <input type="radio" name="delete" value="delete" id="radio-1">
-                <label for="radio-2">Update event</label>
-                <input type="radio" name="update" value="update" id="radio-2">
-                <label for="radio-3">Cancel</label>
-                <input type="radio" name="cancel" value="cancel" id="radio-3">
-                <button type="button" id="submitChangeButton" data-dismiss="modal" class="btn">Submit</button>
-            </form>
-        </fieldset>
-</div>
-
 <div id="changeEventForm" style="display: none;">
     <div><h3>Update this event</h3></div>
     <div>
-        <form id="updateEventForm" class="well" action="/Home/UpdateEvent" method="POST">
-            <input type="hidden" id="oldEventID">
+        <form id="updateEventForm" class="well">
+            <input type="text" id="oldEventID" name="eventID">
             <label>Event title</label>
-            <input type="text" id="oldEventTitle" placeholder="Title here" name="title"><br />
+            <input type="text" id="oldEventTitle" name="title"><br />
             <label>Description</label>
             <input type="text" id="oldEventDescription" name="description"><br />
             <label>Scheduled start date</label>
@@ -70,7 +56,10 @@
             <input type="date" id="oldEventEndDate" name="endDate"><br />
             <label>Scheduled end time</label>
             <input type="time" id="oldEventEndTime" name="endTime"><br />
-            <input type="Submit" id="submitButton">
+            <button type="submit" formmethod="post" formaction="/Home/UpdateEvent">Update</button>
+            <button type="submit" formmethod="post" formaction="/Home/DeleteEvent">Delete</button>
+            <button onclick="$('#calendar').fullCalendar('refetchEvents')">Cancel</button>
+
         </form>
     </div>
 </div>
@@ -113,31 +102,39 @@
                 },
                 eventClick: function (calEvent, jsEvent, view) {
                     alert('You are awesome, Renuka!');
-                    $('#changeOrDeleteForm').show();
-                    $('#radio-1').focus();
-                    $('#submitChangeButton').click(function(){
-                        if ($('#radio-1').checked){
-                            alert('you are deleting this event');
-                            $('#calendar').fullCalendar( 'removeEvents',calEvent.eventID);
-                            deleteEvent(calEvent);}
-                        else
-                        {
-                            if ($('#radio-3').checked){
-                                $('#calendar').fullCalendar('refetchEvents');}
-                            else
-                            {
-                                $('#changeEventForm').show();
-                                $('#oldEventTitle').focus();
-                                $('#oldEventTitle').val(calEvent.title);
-                                $('#oldEventDescription').val(calEvent.description);
-                                $('#oldEventStartDate').val(calEvent.startDate);
-                                $('#oldEventStartTime').val(calEvent.startTime);
-                                $('#oldEventEndDate').val(calEvent.endDate);
-                                $('#oldEventEndTime').val(calEvent.endTime);
-                                $('#calendar').fullCalendar('updateEvent', event);}
+                    $('#changeEventForm').show();
+                    $('#oldEventTitle').focus();
+                    $('#oldEventID').val(calEvent.eventID);
+                    $('#oldEventTitle').val(calEvent.title);
+                    $('#oldEventDescription').val(calEvent.description);
+                    $('#oldEventStartDate').val(calEvent.startDate);
+                    $('#oldEventStartTime').val(calEvent.startTime);
+                    $('#oldEventEndDate').val(calEvent.endDate);
+                    $('#oldEventEndTime').val(calEvent.endTime);
 
-                        }
-                    })
+                    //$('#submitChangeButton').click(function(){
+                    //    if ($('name=action').value='delete'){
+                    //        alert('you are deleting this event');
+                    //        $('#calendar').fullCalendar( 'removeEvents',calEvent.eventID);
+                    //        deleteEvent(calEvent);}
+                    //    else
+                    //    {
+                    //        if ($('name=action').value='cancel'){
+                    //            $('#calendar').fullCalendar('refetchEvents');}
+                    //        else
+                    //        {
+                    //            $('#changeEventForm').show();
+                    //            $('#oldEventTitle').focus();
+                    //            $('#oldEventTitle').val(calEvent.title);
+                    //            $('#oldEventDescription').val(calEvent.description);
+                    //            $('#oldEventStartDate').val(calEvent.startDate);
+                    //            $('#oldEventStartTime').val(calEvent.startTime);
+                    //            $('#oldEventEndDate').val(calEvent.endDate);
+                    //            $('#oldEventEndTime').val(calEvent.endTime);
+                    //            $('#calendar').fullCalendar('updateEvent', event);}
+
+                    //    }
+                    //})
                 },
             });
         })
@@ -178,22 +175,25 @@
             });
         });
 
-    function deleteEvent(calEvent){
+         
+    function UpdateEvent(eventID){
+        alert('in the update event function now');
+        $('#calendar').fullCalendar( 'clientEvents' [eventID] );
+        $('#calendar').fullCalendar( 'updateEvent', calEvent );
         $.ajax({
             type: 'POST',
-            url: "/Home/DeleteEvent",
+            url: "/Home/UpdateEvent",
             data: (calEvent),  //might be 'eventID' instead
             success: function (response) {
                 if (response == 'True') {
                     $('#calendar').fullCalendar('refetchEvents');
-                    alert('Event deleted!');
+                    alert('Event updated!');
                 }
                 else {
-                    alert('Error, could not delete event!');
+                    alert('Error, could not update event!');
                 }
             }
         })};
-            
-    
+
     </script>
 }
