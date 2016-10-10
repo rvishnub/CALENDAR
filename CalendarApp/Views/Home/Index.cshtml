@@ -21,7 +21,7 @@
 <div><h3>Add new event</h3></div>
 <div>
     <form id="newEventForm" class="well" action="/Home/SaveEvent" method="POST">
-        <input type="text" id="eventID">
+        <input type="text" id="eventID"><br />
         <label>Event title</label>
         <input type="text" id="newEventTitle" placeholder="Title here" name="title"><br />
         <label>Description</label>
@@ -30,10 +30,12 @@
         <input type="date" id="newEventStartDate" name="startDate"><br />
         <label>Scheduled start time</label>
         <input type="time" id="newEventStartTime" name="startTime"><br />
+        @*<input type="text" id="newEventStartTime" data-format="HH:mm" data-template="HH : mm" name="startTime"><br />*@
         <label>Scheduled end date</label>
         <input type="date" id="newEventEndDate" name="endDate"><br />
         <label>Scheduled end time</label>
         <input type="time" id="newEventEndTime" name="endTime"><br />
+        @*<input type="text" id="newEventEndTime" data-format="HH:mm" data-template="HH : mm" name="endTime"><br />*@
         <input type="Submit" id="submitButton">
     </form>
 </div>
@@ -73,7 +75,7 @@
 <script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
 <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
 <script src='~/Scripts/locale-all.js'></script>
-
+<script src='~/Scripts/combodate.js'></script>
 
     <script type="text/javascript">
 
@@ -93,12 +95,11 @@
                 timezone: 'local',
                 allDay: true,
                 events: @Html.Raw(Model.calendarDataHolder),
-                dayClick: function (date, jsEvent, view) {
+                dayClick: function (date, allDay, jsEvent, view) {
                     alert('You are SO awesome, Renuka!')
-                    ClearNewEventFormValues();
                     $('#eventForm').show();
                     $('#newEventTitle').focus();
-                    $('#newEventStartDate').val(date);
+                    $('name=startDate').val(date);
                     $('#newEventTitle').val("");
 
                 },
@@ -117,6 +118,20 @@
                 },
             });
         })
+
+        //$(function(){
+        //    $('#newEventStartTime').combodate({
+        //        firstItem: 'TIME',
+        //        minuteStep: 15
+        //    });  
+        //});
+
+        //$(function(){
+        //    $('#newEventEndTime').combodate({
+        //        firstItem: 'TIME',
+        //        minuteStep: 15
+        //    });  
+        //});
 
         function ClearNewEventFormValues() {
             $('eventID').val("");
