@@ -22,11 +22,6 @@ namespace CalendarApp.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         public ActionResult Index()
         {
-            //List<Event> eventList = db.Events.ToList();
-            //JavaScriptSerializer serializer = new JavaScriptSerializer();
-            //string json = serializer.Serialize(eventList);
-            //return View(new Event() { calendarDataHolder = json });
-
             var eventList = db.Events.ToList();
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             string json = serializer.Serialize(eventList);
@@ -56,7 +51,7 @@ namespace CalendarApp.Controllers
         }
 
         public Event GetEvents(string eventID)
-        {
+         {
             Event existingEvent = new Event();
             existingEvent = db.Events.Where(g => g.eventID == eventID).First();
             return existingEvent;

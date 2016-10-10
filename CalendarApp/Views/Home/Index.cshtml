@@ -12,8 +12,8 @@
     <h1>CALENDAR</h1>
 </div>
 <div class="row">
-    <div class="col-md-12">
-        <div id="calendar" width="65%"></div>
+    <div class="col-md-8">
+        <div id="calendar" width="80%"></div>
     </div>
 </div>
 
@@ -72,9 +72,10 @@
 <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery.min.js'></script>
 <script src="http://fullcalendar.io/js/fullcalendar-2.1.1/lib/jquery-ui.custom.min.js"></script>
 <script src='http://fullcalendar.io/js/fullcalendar-2.1.1/fullcalendar.min.js'></script>
+<script src='~/Scripts/locale-all.js'></script>
+
 
     <script type="text/javascript">
-
 
         $(document).ready(function () {
             $('#calendar').fullCalendar({
@@ -83,21 +84,22 @@
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listWeek'
                 },
-                
+                contentHeight: 'auto',
                 theme: true,
                 nowIndicator: true,
                 defaultView: 'month',
                 editable: true,
                 lazyFetching: true,
+                timezone: 'local',
                 allDay: true,
                 events: @Html.Raw(Model.calendarDataHolder),
-                dayClick: function (date, allDay, jsEvent, view) {
+                dayClick: function (date, jsEvent, view) {
                     alert('You are SO awesome, Renuka!')
                     ClearNewEventFormValues();
                     $('#eventForm').show();
                     $('#newEventTitle').focus();
-                    $('#newEventTitle').val("");
                     $('#newEventStartDate').val(date);
+                    $('#newEventTitle').val("");
 
                 },
                 eventClick: function (calEvent, jsEvent, view) {
@@ -112,29 +114,6 @@
                     $('#oldEventEndDate').val(calEvent.endDate);
                     $('#oldEventEndTime').val(calEvent.endTime);
 
-                    //$('#submitChangeButton').click(function(){
-                    //    if ($('name=action').value='delete'){
-                    //        alert('you are deleting this event');
-                    //        $('#calendar').fullCalendar( 'removeEvents',calEvent.eventID);
-                    //        deleteEvent(calEvent);}
-                    //    else
-                    //    {
-                    //        if ($('name=action').value='cancel'){
-                    //            $('#calendar').fullCalendar('refetchEvents');}
-                    //        else
-                    //        {
-                    //            $('#changeEventForm').show();
-                    //            $('#oldEventTitle').focus();
-                    //            $('#oldEventTitle').val(calEvent.title);
-                    //            $('#oldEventDescription').val(calEvent.description);
-                    //            $('#oldEventStartDate').val(calEvent.startDate);
-                    //            $('#oldEventStartTime').val(calEvent.startTime);
-                    //            $('#oldEventEndDate').val(calEvent.endDate);
-                    //            $('#oldEventEndTime').val(calEvent.endTime);
-                    //            $('#calendar').fullCalendar('updateEvent', event);}
-
-                    //    }
-                    //})
                 },
             });
         })
@@ -148,52 +127,25 @@
             $('#eventEndDate').val("");
             $('#eventEndTime').val("");
         }
-
-        $('#btnnewEventFormSave').click(function () {
-            $('#eventForm').hide();
-            var dataRow = {
-                'title': $('#newEventTitle').val(),
-                'description': $('#newEventDescription').val(),
-                'start': $('#newEventStartDate').val() + " " + $('#newEventStartTime'),
-                'end': $('#eventDate').val(),
-            };
-            alert(dataRow);
-            ClearNewEventFormValues();
-            $.ajax({
-                type: 'POST',
-                url: '/Home/SaveEvent',
-                data: dataRow,
-                success: function (response) {
-                    if (response == 'True') {
-                        $('#calendar').fullCalendar('refetchEvents');
-                        alert('New event saved!');
-                    }
-                    else {
-                        alert('Error, could not save event!');
-                    }
-                }
-            });
-        });
-
-         
-    function UpdateEvent(eventID){
-        alert('in the update event function now');
-        $('#calendar').fullCalendar( 'clientEvents' [eventID] );
-        $('#calendar').fullCalendar( 'updateEvent', calEvent );
-        $.ajax({
-            type: 'POST',
-            url: "/Home/UpdateEvent",
-            data: (calEvent),  //might be 'eventID' instead
-            success: function (response) {
-                if (response == 'True') {
-                    $('#calendar').fullCalendar('refetchEvents');
-                    alert('Event updated!');
-                }
-                else {
-                    alert('Error, could not update event!');
-                }
-            }
-        })};
+        
+    //function UpdateEvent(eventID){
+    //    alert('in the update event function now');
+    //    $('#calendar').fullCalendar( 'clientEvents' [eventID] );
+    //    $('#calendar').fullCalendar( 'updateEvent', calEvent );
+    //    $.ajax({
+    //        type: 'POST',
+    //        url: "/Home/UpdateEvent",
+    //        data: (calEvent),  //might be 'eventID' instead
+    //        success: function (response) {
+    //            if (response == 'True') {
+    //                $('#calendar').fullCalendar('refetchEvents');
+    //                alert('Event updated!');
+    //            }
+    //            else {
+    //                alert('Error, could not update event!');
+    //            }
+    //        }
+    //    })};
 
     </script>
 }
